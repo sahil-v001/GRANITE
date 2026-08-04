@@ -1,0 +1,31 @@
+# ── Compiled Binaries ──────────────────────────────────────
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/cmd/server/server
+
+# ── Live Database Disk Data ────────────────────────────────
+# Prevents LSM test data from being pushed to GitHub
+/data/
+*.wal
+*.sst
+*.db
+
+# ── Test & Coverage Outputs ────────────────────────────────
+*.test
+*.out
+/coverage/
+
+# ── IDE & Editor Files ─────────────────────────────────────
+.idea/
+.vscode/
+*.suo
+*.swp
+*~
+
+# ── Personal Notes (not part of the project code) ──────────
+mainfesto.md
+granite_master_guide.md
+README.md
