@@ -9,6 +9,7 @@ import (
 
 type WAL struct {
 	file *os.File
+	path string 
 }
 
 func NewWAL(path string) (*WAL, error) {
@@ -16,7 +17,7 @@ func NewWAL(path string) (*WAL, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &WAL{file: f}, nil
+	return &WAL{file: f, path: path}, nil
 }
 
 func (w *WAL) Append(data []byte) error {
@@ -79,9 +80,19 @@ func (w *WAL) ReadAll() ([][]byte, int64, error) {
 }
 
 func (w *WAL) Truncate(size int64) error {
-	return w.file.Truncate(size)
+	if err := w.file.Close(); err != nil {
+		return err
+	}
+	if err := os.Truncate(w.path, size); err != nil {
+		return err
+	}
+	f, err := os.OpenFile(w.path, os.O_RDWR|os.O_APPEND, 0644)
+	if err != nil {
+		return err
+	}
+	w.file = f
+	return nil
 }
-
 
 func (w *WAL) Close() error {
 	return w.file.Close()
