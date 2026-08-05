@@ -1,31 +1,39 @@
-# ── Compiled Binaries ──────────────────────────────────────
+# 🖥️ Compiled Binaries
+/cmd/server/server
+/cmd/benchmark/benchmark
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
-/cmd/server/server
 
-# ── Live Database Disk Data ────────────────────────────────
-# Prevents LSM test data from being pushed to GitHub
+# 📂 Live Database Disk Data
 /data/
 *.wal
 *.sst
+*.bin
 *.db
 
-# ── Test & Coverage Outputs ────────────────────────────────
+# 🧪 Testing and Coverage Outputs
 *.test
 *.out
 /coverage/
+/dist/
 
-# ── IDE & Editor Files ─────────────────────────────────────
+# 🛠️ Development IDEs and Workspace State
 .idea/
 .vscode/
 *.suo
+*.ntvs*
+*.njsproj
+*.sln
 *.swp
 *~
 
-# ── Personal Notes (not part of the project code) ──────────
+# 📦 Dependencies and Go Environment Cache
+vendor/
+.go/
+
+# 📝 Personal Notes
 mainfesto.md
 granite_master_guide.md
-README.md
