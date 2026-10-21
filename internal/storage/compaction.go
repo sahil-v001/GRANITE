@@ -12,7 +12,6 @@ import (
 )
 
 type CompactionResult struct {
-
 	NewSSTablePath string
 
 	RemovedPaths []string
@@ -105,10 +104,10 @@ func compactFiles(paths []string, dataDir string) (*CompactionResult, error) {
 	}
 
 	type versionedEntry struct {
-		key      []byte
-		value    []byte
-		op       OpType
-		fileIdx  int
+		key     []byte
+		value   []byte
+		op      OpType
+		fileIdx int
 	}
 
 	var allEntries []versionedEntry
