@@ -11,16 +11,15 @@ import (
 type OpType byte
 
 const (
-	OpPut OpType = 0x01
+	OpPut    OpType = 0x01
 	OpDelete OpType = 0x02
 )
 
-// 4 (CRC32) + 1 (OpType) + 2 (KeyLen) + 4 (ValueLen) = 11 bytes
 const walHeaderSize = 11
 
 type WAL struct {
-	file *os.File 
-	path string  
+	file *os.File
+	path string
 }
 
 func OpenWAL(path string) (*WAL, error) {
@@ -36,7 +35,7 @@ func (w *WAL) Append(op OpType, key, value []byte) error {
 		return fmt.Errorf("wal: key too large: %d bytes (max 65535)", len(key))
 	}
 
-	bodySize := 1 + 2 + 4 + len(key) + len(value) // OpType + KeyLen + ValueLen + key + value
+	bodySize := 1 + 2 + 4 + len(key) + len(value)
 	body := make([]byte, bodySize)
 	offset := 0
 
@@ -54,11 +53,11 @@ func (w *WAL) Append(op OpType, key, value []byte) error {
 
 	copy(body[offset:], value)
 
-	checksum := crc32.ChecksumIEEE(body) 
+	checksum := crc32.ChecksumIEEE(body)
 
 	record := make([]byte, walHeaderSize+len(key)+len(value))
-	binary.LittleEndian.PutUint32(record[0:4], checksum) 
-	copy(record[4:], body)                              
+	binary.LittleEndian.PutUint32(record[0:4], checksum)
+	copy(record[4:], body)
 
 	if _, err := w.file.Write(record); err != nil {
 		return fmt.Errorf("wal: failed to write record: %w", err)
@@ -86,13 +85,13 @@ func (w *WAL) Path() string {
 }
 
 type WALRecord struct {
-	Op    OpType 
-	Key   []byte 
-	Value []byte 
+	Op    OpType
+	Key   []byte
+	Value []byte
 }
 
 func ReadWALRecords(path string) ([]WALRecord, error) {
-	file, err := os.Open(path) // Open for reading only
+	file, err := os.Open(path)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, nil
@@ -102,7 +101,7 @@ func ReadWALRecords(path string) ([]WALRecord, error) {
 	defer file.Close()
 
 	var records []WALRecord
-	header := make([]byte, walHeaderSize) 
+	header := make([]byte, walHeaderSize)
 
 	for {
 		_, err := io.ReadFull(file, header)
@@ -116,12 +115,12 @@ func ReadWALRecords(path string) ([]WALRecord, error) {
 			return nil, fmt.Errorf("wal: error reading header: %w", err)
 		}
 
-		storedChecksum := binary.LittleEndian.Uint32(header[0:4]) 
-		op := OpType(header[4])                                  
-		keyLen := binary.LittleEndian.Uint16(header[5:7])     
-		valueLen := binary.LittleEndian.Uint32(header[7:11])  
+		storedChecksum := binary.LittleEndian.Uint32(header[0:4])
+		op := OpType(header[4])
+		keyLen := binary.LittleEndian.Uint16(header[5:7])
+		valueLen := binary.LittleEndian.Uint32(header[7:11])
 
-		bodySize := 1 + 2 + 4 + int(keyLen) + int(valueLen) 
+		bodySize := 1 + 2 + 4 + int(keyLen) + int(valueLen)
 		body := make([]byte, bodySize)
 
 		body[0] = byte(op)
